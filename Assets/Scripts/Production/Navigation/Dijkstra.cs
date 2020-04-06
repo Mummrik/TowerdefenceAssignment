@@ -7,10 +7,12 @@ namespace AI
     public class Dijkstra : IPathFinder
     {
         private List<Vector2Int> grid;
+        private List<Vector2Int> path;
 
         public Dijkstra(List<Vector2Int> newGrid)
         {
             grid = newGrid;
+            path = new List<Vector2Int>();
         }
 
         public IEnumerable<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
@@ -44,18 +46,15 @@ namespace AI
 
             if (ancestors.ContainsKey(goal))
             {
-                List<Vector2Int> path = new List<Vector2Int>();
-                foreach (var node in ancestors)
+                foreach (Vector2Int node in ancestors.Values)
                 {
-                    path.Add(node.Value);
-                    //path.Add(node.Key);
+                    path.Add(node);
                 }
-
-                path.Reverse();
+                path.Add(goal);
                 return path;
             }
-
             return null;
         }
+
     }
 }

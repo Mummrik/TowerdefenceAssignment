@@ -3,21 +3,19 @@ using UnityEngine;
 
 public class MapReader : MonoBehaviour
 {
-    [SerializeField] private GameObject[] tilePrefabs;
-
     private string[] rawTileData;
     private string[] rawEnemyData;
-    private Map[] maps;
+    private static Map[] maps;
 
-    private struct Map
+    public struct Map
     {
         public int maxWidth;
         public int maxHeight;
         public Tile[,] tiles;
     }
-    private struct Tile
+    public struct Tile
     {
-        public int id;
+        public char id;
         public int x;
         public int y;
     }
@@ -40,9 +38,19 @@ public class MapReader : MonoBehaviour
         {
             ConstructMap(i);
         }
+    }
 
-        //int randomMap = UnityEngine.Random.Range(0, maps.Length);
-        DrawMap(maps[UnityEngine.Random.Range(0, maps.Length)]);
+    private void Start()
+    {
+        int randomMap = UnityEngine.Random.Range(0, maps.Length);
+        LoadMap(randomMap);
+        //Destroy(gameObject);
+    }
+    public static void LoadMap(int mapId)
+    {
+        GameObject mapData = Instantiate(Resources.Load<GameObject>("MapData"));
+        mapData.name = "MapData";
+        mapData.GetComponent<MapData>().DrawMap(maps[mapId]);
     }
 
     private void ConstructMap(int mapId)
@@ -78,21 +86,8 @@ public class MapReader : MonoBehaviour
             char[] tileIds = tileLines[i].ToCharArray(0, tileLines[i].Length - 1);
             for (int x = 0; x < tileLines[i].Length - 1; x++)
             {
-                maps[mapId].tiles[x, y].id = (int)char.GetNumericValue(tileIds[x]);
+                maps[mapId].tiles[x, y].id = tileIds[x];
             }
         }
-    }
-
-    private void DrawMap(Map map)
-    {
-        foreach (Tile tile in map.tiles)
-        {
-            GameObject obj = Instantiate(tilePrefabs[(int)TileMethods.TypeById[tile.id]]);
-            obj.transform.position = Vector3.forward * tile.y * 2 + Vector3.right * tile.x * 2;
-            obj.name = $"({tile.x},{tile.y})";
-            obj.transform.SetParent(transform);
-        }
-        // Set camera position in center of level
-        Camera.main.transform.position = new Vector3(((map.maxWidth - 1) * 2) * 0.5f, 25, ((map.maxHeight - 1) * 2) * 0.5f);
     }
 }

@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 796884247}
   - component: {fileID: 796884246}
   m_Layer: 0
-  m_Name: Level
+  m_Name: MapReader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
