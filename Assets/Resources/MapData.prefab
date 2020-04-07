@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3691945866875410126}
   - component: {fileID: 3805768258089056583}
+  - component: {fileID: 8350618576614723397}
   m_Layer: 0
   m_Name: MapData
   m_TagString: Untagged
@@ -43,10 +44,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70445ae27bc51de4f9e78fe726484bfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefabs:
+  m_TilePrefabs:
   - {fileID: 8446340793006353421, guid: 3445e6bc04d6d478291c03e5d82bb4fc, type: 3}
   - {fileID: 5807043221564994009, guid: 146d056a4463e4d4380e1679e4d2e16f, type: 3}
   - {fileID: 5719485938209910767, guid: 8065c0e3e208a8e47a9b418f23362c79, type: 3}
   - {fileID: 5719485938209910767, guid: 9058376e4a8804756acc0e60103feae4, type: 3}
   - {fileID: 6189042043493516721, guid: ddaec73c1732b4af4b5f402d92b9f36f, type: 3}
   - {fileID: 6360046985728068882, guid: c6e46598445204935bcf241407b687d5, type: 3}
+--- !u!114 &8350618576614723397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790028615980492659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 949ba883d19ffd2499fa06ff9612a98a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EnemyPrefabs:
+  - {fileID: 3358623668188840345, guid: 8ce210b695112664aa8a76f98daee2e2, type: 3}
+  - {fileID: 3358623668188840345, guid: 116fda0e5defb46aba819fdb1f4ec0bf, type: 3}
+  m_SpawnTime: 1

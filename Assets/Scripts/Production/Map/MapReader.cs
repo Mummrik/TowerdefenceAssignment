@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class MapReader : MonoBehaviour
 {
-    private string[] rawTileData;
-    private string[] rawEnemyData;
-    private static Map[] maps;
+    private string[] m_RawTileData;
+    private static string[] s_RawEnemyData;
+    private static Map[] s_Maps;
 
     public struct Map
     {
@@ -23,18 +23,18 @@ public class MapReader : MonoBehaviour
     private void Awake()
     {
         TextAsset[] rawMapData = Resources.LoadAll<TextAsset>(ProjectPaths.RESOURCES_MAP_SETTINGS);
-        maps = new Map[rawMapData.Length];
-        rawTileData = new string[rawMapData.Length];
-        rawEnemyData = new string[rawMapData.Length];
+        s_Maps = new Map[rawMapData.Length];
+        m_RawTileData = new string[rawMapData.Length];
+        s_RawEnemyData = new string[rawMapData.Length];
 
         for (int i = 0; i < rawMapData.Length; i++)
         {
             string[] data = rawMapData[i].text.Split('#');
-            rawTileData[i] = data[0];
-            rawEnemyData[i] = data[1];
+            m_RawTileData[i] = data[0];
+            s_RawEnemyData[i] = data[1];
         }
 
-        for (int i = 0; i < maps.Length; i++)
+        for (int i = 0; i < s_Maps.Length; i++)
         {
             ConstructMap(i);
         }
@@ -42,7 +42,7 @@ public class MapReader : MonoBehaviour
 
     private void Start()
     {
-        int randomMap = UnityEngine.Random.Range(0, maps.Length);
+        int randomMap = UnityEngine.Random.Range(0, s_Maps.Length);
         LoadMap(randomMap);
         //Destroy(gameObject);
     }
@@ -50,43 +50,44 @@ public class MapReader : MonoBehaviour
     {
         GameObject mapData = Instantiate(Resources.Load<GameObject>("MapData"));
         mapData.name = "MapData";
-        mapData.GetComponent<MapData>().DrawMap(maps[mapId]);
+        mapData.GetComponent<MapData>().DrawMap(s_Maps[mapId]);
+        mapData.GetComponent<EnemyManager>().ConstructEnemyWaves(s_RawEnemyData[mapId]);
     }
 
     private void ConstructMap(int mapId)
     {
-        string[] tileLines = rawTileData[mapId].Split('\n');
-        maps[mapId].maxHeight = tileLines.Length - 1;
+        string[] tileLines = m_RawTileData[mapId].Split('\n');
+        s_Maps[mapId].maxHeight = tileLines.Length - 1;
 
-        for (int i = 0; i < maps[mapId].maxHeight; i++)
+        for (int i = 0; i < s_Maps[mapId].maxHeight; i++)
         {
-            if (tileLines[i].Length - 1 > maps[mapId].maxWidth)
+            if (tileLines[i].Length - 1 > s_Maps[mapId].maxWidth)
             {
-                maps[mapId].maxWidth = tileLines[i].Length - 1;
+                s_Maps[mapId].maxWidth = tileLines[i].Length - 1;
             }
         }
 
-        maps[mapId].tiles = new Tile[maps[mapId].maxWidth, maps[mapId].maxHeight];
+        s_Maps[mapId].tiles = new Tile[s_Maps[mapId].maxWidth, s_Maps[mapId].maxHeight];
 
-        for (int i = 0; i < maps[mapId].tiles.Length; i++)
+        for (int i = 0; i < s_Maps[mapId].tiles.Length; i++)
         {
-            for (int x = 0; x < maps[mapId].maxWidth; x++)
+            for (int x = 0; x < s_Maps[mapId].maxWidth; x++)
             {
-                for (int y = 0; y < maps[mapId].maxHeight; y++)
+                for (int y = 0; y < s_Maps[mapId].maxHeight; y++)
                 {
-                    maps[mapId].tiles[x, y].x = x;
-                    maps[mapId].tiles[x, y].y = y;
+                    s_Maps[mapId].tiles[x, y].x = x;
+                    s_Maps[mapId].tiles[x, y].y = y;
                 }
             }
         }
 
-        for (int y = 0; y < maps[mapId].maxHeight; y++)
+        for (int y = 0; y < s_Maps[mapId].maxHeight; y++)
         {
             int i = y;
             char[] tileIds = tileLines[i].ToCharArray(0, tileLines[i].Length - 1);
             for (int x = 0; x < tileLines[i].Length - 1; x++)
             {
-                maps[mapId].tiles[x, y].id = tileIds[x];
+                s_Maps[mapId].tiles[x, y].id = tileIds[x];
             }
         }
     }

@@ -6,13 +6,12 @@ namespace AI
     //TODO: Implement IPathFinder using Dijsktra algorithm.
     public class Dijkstra : IPathFinder
     {
-        private List<Vector2Int> grid;
-        private List<Vector2Int> path;
+        private List<Vector2Int> m_Grid;
+        private List<Vector2Int> m_Path;
 
         public Dijkstra(List<Vector2Int> newGrid)
         {
-            grid = newGrid;
-            path = new List<Vector2Int>();
+            m_Grid = newGrid;
         }
 
         public IEnumerable<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
@@ -33,7 +32,7 @@ namespace AI
                 for (int i = 0; i < Tools.DirectionTools.Dirs.Length; i++)
                 {
                     Vector2Int scanNode = currentNode + Tools.DirectionTools.Dirs[i];
-                    if (grid.Contains(scanNode))
+                    if (m_Grid.Contains(scanNode))
                     {
                         if (!ancestors.ContainsKey(scanNode))
                         {
@@ -46,12 +45,13 @@ namespace AI
 
             if (ancestors.ContainsKey(goal))
             {
+                m_Path = new List<Vector2Int>();
                 foreach (Vector2Int node in ancestors.Values)
                 {
-                    path.Add(node);
+                    m_Path.Add(node * 2);
                 }
-                path.Add(goal);
-                return path;
+                m_Path.Add(goal * 2);
+                return m_Path;
             }
             return null;
         }
