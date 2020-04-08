@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Tools;
 using UnityEngine;
 
 public struct EnemyData
@@ -10,15 +10,26 @@ public struct EnemyData
 }
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] m_EnemyPrefabs;
+    [SerializeField] private GameObject[] m_EnemyPrefabs = new GameObject[0];
     [SerializeField, Tooltip("Time in seconds.")] private float m_SpawnTime = 1.0f;
 
     private List<Vector2Int> m_Path;
     private Queue<EnemyData> m_Enemies = new Queue<EnemyData>();
     private float m_Timer;
+    private Transform m_Parent;
 
+    public static Queue<GameObject> s_EnemyPool = new Queue<GameObject>();
+    public static List<GameObject> s_Enemies = new List<GameObject>();
 
+    private GameObjectPool s_EnemyPool1;
+    private GameObjectPool s_EnemyPool2;
 
+    private void Awake()
+    {
+        m_Parent = new GameObject("Enemies").transform;
+        s_EnemyPool1 = new GameObjectPool(1, m_EnemyPrefabs[1], 1, m_Parent);
+        s_EnemyPool2 = new GameObjectPool(1, m_EnemyPrefabs[0], 1, m_Parent);
+    }
     public void ConstructEnemyWaves(string enemyData)
     {
         m_Path = MapData.GetPath();
@@ -50,7 +61,7 @@ public class EnemyManager : MonoBehaviour
                 m_Enemies.Enqueue(enemy);
             }
         }
-        
+
     }
 
     private void Update()
@@ -61,10 +72,24 @@ public class EnemyManager : MonoBehaviour
             if (m_Timer >= m_SpawnTime)
             {
                 EnemyData enemyData = m_Enemies.Dequeue();
-                GameObject obj = Instantiate(m_EnemyPrefabs[enemyData.id]);
-                obj.transform.position = new Vector3(m_Path[0].x, 1, m_Path[0].y);
-                Enemy enemy = obj.GetComponent<Enemy>();
-                enemy.ConstructEnemy(enemyData, m_Path);
+
+                if (UnitMethods.TypeById[enemyData.id] == UnitType.Standard)
+                {
+                    GameObject obj = s_EnemyPool1.Rent(false);
+                    Enemy enemy = obj.GetComponent<Enemy>();
+                    enemy.ConstructEnemy(enemyData, m_Path);
+                    enemy.OnSpawn();
+                    s_Enemies.Add(obj);
+                }
+                else if (UnitMethods.TypeById[enemyData.id] == UnitType.Big)
+                {
+                    GameObject obj = s_EnemyPool2.Rent(false);
+                    Enemy enemy = obj.GetComponent<Enemy>();
+                    enemy.ConstructEnemy(enemyData, m_Path);
+                    enemy.OnSpawn();
+                    s_Enemies.Add(obj);
+                }
+
                 m_Timer -= m_SpawnTime;
             }
         }

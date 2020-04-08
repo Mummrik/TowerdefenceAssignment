@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 225077031991834589}
   - component: {fileID: -3663358206812227834}
   m_Layer: 0
-  m_Name: Cannon_Ball
+  m_Name: Frost_Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d963a953cb4224d60a2e05a75e7357d3, type: 2}
+  - {fileID: 2100000, guid: a05a79773b69e40758e7b8100e002b33, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

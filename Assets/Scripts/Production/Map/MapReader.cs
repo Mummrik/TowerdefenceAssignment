@@ -1,24 +1,24 @@
 ﻿using TowerDefense;
 using UnityEngine;
 
+public struct Map
+{
+    public int maxWidth;
+    public int maxHeight;
+    public Tile[,] tiles;
+}
+public struct Tile
+{
+    public char id;
+    public int x;
+    public int y;
+}
 public class MapReader : MonoBehaviour
 {
     private string[] m_RawTileData;
     private static string[] s_RawEnemyData;
     private static Map[] s_Maps;
 
-    public struct Map
-    {
-        public int maxWidth;
-        public int maxHeight;
-        public Tile[,] tiles;
-    }
-    public struct Tile
-    {
-        public char id;
-        public int x;
-        public int y;
-    }
 
     private void Awake()
     {
@@ -44,7 +44,6 @@ public class MapReader : MonoBehaviour
     {
         int randomMap = UnityEngine.Random.Range(0, s_Maps.Length);
         LoadMap(randomMap);
-        //Destroy(gameObject);
     }
     public static void LoadMap(int mapId)
     {

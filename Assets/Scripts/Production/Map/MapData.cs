@@ -1,11 +1,10 @@
 ﻿using AI;
 using System.Collections.Generic;
 using UnityEngine;
-using static MapReader;
 
 public class MapData : MonoBehaviour
 {
-    [SerializeField] private GameObject[] m_TilePrefabs;
+    [SerializeField] private GameObject[] m_TilePrefabs = new GameObject[0];
     private static List<Vector2Int> s_Path = new List<Vector2Int>();
 
     private List<GameObject> m_TilePool = new List<GameObject>();
@@ -59,6 +58,7 @@ public class MapData : MonoBehaviour
         return s_Path;
     }
 
+    // Draw path
     //private void OnDrawGizmos()
     //{
     //    if (s_Path != null && s_Path.Count > 0)
