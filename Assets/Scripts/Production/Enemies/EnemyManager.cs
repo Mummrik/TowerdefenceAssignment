@@ -14,11 +14,10 @@ public class EnemyManager : MonoBehaviour
     [SerializeField, Tooltip("Time in seconds.")] private float m_SpawnTime = 1.0f;
 
     private List<Vector2Int> m_Path;
-    private Queue<EnemyData> m_Enemies = new Queue<EnemyData>();
+    private Queue<EnemyData> m_EnemyWaves = new Queue<EnemyData>();
     private float m_Timer;
     private Transform m_Parent;
 
-    public static Queue<GameObject> s_EnemyPool = new Queue<GameObject>();
     public static List<GameObject> s_Enemies = new List<GameObject>();
 
     private GameObjectPool s_EnemyPool1;
@@ -46,19 +45,19 @@ public class EnemyManager : MonoBehaviour
             {
                 EnemyData enemy = new EnemyData();
                 enemy.id = 0;
-                enemy.health = 10;
+                enemy.health = 75;
                 enemy.speed = 5.0f;
 
-                m_Enemies.Enqueue(enemy);
+                m_EnemyWaves.Enqueue(enemy);
             }
             for (int j = 0; j < enemyType2; j++)
             {
                 EnemyData enemy = new EnemyData();
                 enemy.id = 1;
-                enemy.health = 20;
+                enemy.health = 125;
                 enemy.speed = 2.5f;
 
-                m_Enemies.Enqueue(enemy);
+                m_EnemyWaves.Enqueue(enemy);
             }
         }
 
@@ -66,12 +65,12 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
-        if (m_Enemies.Count > 0)
+        if (m_EnemyWaves.Count > 0)
         {
             m_Timer += Time.deltaTime;
             if (m_Timer >= m_SpawnTime)
             {
-                EnemyData enemyData = m_Enemies.Dequeue();
+                EnemyData enemyData = m_EnemyWaves.Dequeue();
 
                 if (UnitMethods.TypeById[enemyData.id] == UnitType.Standard)
                 {

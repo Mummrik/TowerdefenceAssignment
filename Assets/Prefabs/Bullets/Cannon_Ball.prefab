@@ -11,15 +11,15 @@ GameObject:
   - component: {fileID: 225077031991834576}
   - component: {fileID: 225077031991834591}
   - component: {fileID: 225077031991834590}
-  - component: {fileID: 225077031991834589}
   - component: {fileID: -3663358206812227834}
+  - component: {fileID: 1448537238593697177}
   m_Layer: 0
   m_Name: Cannon_Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &225077031991834576
 Transform:
   m_ObjectHideFlags: 0
@@ -81,19 +81,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &225077031991834589
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 225077031991834588}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-3663358206812227834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,3 +93,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ff1f5483551314bb221a2845501e13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BulletType: 1
+  m_CritChance: 15
+  m_MaxDamage: 2
+--- !u!135 &1448537238593697177
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225077031991834588}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}

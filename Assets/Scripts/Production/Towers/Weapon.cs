@@ -22,10 +22,8 @@ public class Weapon : MonoBehaviour
             GameObject bullet = m_BulletPool.Rent(false);
             bullet.transform.position = transform.position;
             Bullet bulletComponent = bullet.GetComponent<Bullet>();
-            bulletComponent.SetTarget(target);
-            //bulletComponent.Reset();
+            bulletComponent.SetTargetPosition(target.transform.position);
             bullet.SetActive(true);
-            //bulletComponent.Push();
         }
     }
 

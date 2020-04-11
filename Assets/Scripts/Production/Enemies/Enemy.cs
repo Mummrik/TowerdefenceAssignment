@@ -9,11 +9,21 @@ public class Enemy : MonoBehaviour
     private Vector3 m_TargetPosition;
     private Animator m_Animator;
 
-    public EnemyData Data { get => m_Data;}
+    private float m_Health;
+
+    private float m_MovementSpeed;
+    private bool m_IsSlowed = false;
+    private float m_SlowTimer;
+
+    private float m_DespawnTimer;
+    private bool m_IsDead;
+
+    public EnemyData Data { get => m_Data; }
 
     public void ConstructEnemy(EnemyData data, List<Vector2Int> path)
     {
         m_Data = data;
+
         m_PathList = new List<Vector2Int>(path);
         m_Path = new Queue<Vector2Int>(m_PathList);
         m_Animator = transform.GetComponent<Animator>();
@@ -24,32 +34,140 @@ public class Enemy : MonoBehaviour
         m_Path = new Queue<Vector2Int>(m_PathList);
         transform.position = new Vector3(m_PathList[0].x, 1, m_PathList[0].y);
         m_TargetPosition = transform.position;
+        m_MovementSpeed = m_Data.speed;
+        m_Health = m_Data.health;
+        m_IsDead = false;
         gameObject.SetActive(true);
+        m_Animator.SetBool("isWalking", false);
+        m_Animator.SetBool("Damaged", false);
+        m_Animator.SetBool("Killed", false);
     }
 
     private void Update()
     {
-        if (m_Path.Count > 0)
+        if (IsAlive())
         {
-            m_Animator.SetBool("isWalking", true);
-            if (transform.position != m_TargetPosition)
+            CheckSlowedCondition();
+            Movement();
+        }
+    }
+
+    private bool IsAlive()
+    {
+        if (m_Health > 0)
+        {
+            return true;
+        }
+        else
+        {
+            m_IsDead = true;
+            m_DespawnTimer += Time.deltaTime;
+            if (m_DespawnTimer >= 0.5f)
             {
-                transform.LookAt(m_TargetPosition);
-                transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, m_Data.speed * Time.deltaTime);
+                m_DespawnTimer = 0;
+                gameObject.SetActive(false);
+            }
+        }
+
+        return false;
+    }
+
+    private void CheckSlowedCondition()
+    {
+        if (m_IsSlowed)
+        {
+            m_SlowTimer += Time.deltaTime;
+            if (m_SlowTimer >= 0.5f)
+            {
+                m_SlowTimer = 0;
+                m_IsSlowed = false;
+                m_MovementSpeed = m_Data.speed;
+            }
+
+        }
+    }
+
+    private void Movement()
+    {
+        if (!m_IsDead)
+        {
+            if (m_Path.Count > 0)
+            {
+                m_Animator.SetBool("isWalking", true);
+                if (transform.position != m_TargetPosition)
+                {
+                    transform.LookAt(m_TargetPosition);
+                    transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, m_MovementSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    Vector2Int position = m_Path.Dequeue();
+                    m_TargetPosition = new Vector3(position.x, transform.position.y, position.y);
+                }
             }
             else
             {
-                Vector2Int tempPos = m_Path.Dequeue();
-                m_TargetPosition = new Vector3(tempPos.x, transform.position.y, tempPos.y);
+                //TODO: Reached end should remove health from tower
+
+                transform.gameObject.SetActive(false);
             }
         }
         else
         {
-            //Debug.Log("Enemy have not path");
             m_Animator.SetBool("isWalking", false);
-            EnemyManager.s_EnemyPool.Enqueue(gameObject);
-            transform.gameObject.SetActive(false);
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!m_IsDead)
+        {
+            if (other.TryGetComponent(out Bullet bullet))
+            {
+                float isCriticalHit = UnityEngine.Random.Range(0f, 1f);
+                float damage = UnityEngine.Random.Range(bullet.Damage / 2, bullet.Damage + 1);
+                if (damage <= 0) { damage = 1f; }
+                damage = damage * (isCriticalHit <= bullet.CritChance ? 2 : 1);
+
+                if (bullet.BulletType == BulletType.Cannon)
+                {
+                    for (int i = 0; i < EnemyManager.s_Enemies.Count; i++)
+                    {
+                        GameObject enemy = EnemyManager.s_Enemies[i];
+                        if (Vector3.Distance(transform.position, enemy.transform.position) <= 3f)
+                        {
+                            enemy.GetComponent<Enemy>().m_Health -= damage;
+                            enemy.GetComponent<Animator>().SetBool("Damaged", true);
+                        }
+                    }
+                }
+                else if (bullet.BulletType == BulletType.Frost)
+                {
+                    if (m_IsSlowed == false)
+                    {
+                        m_MovementSpeed = m_MovementSpeed * 0.3f;
+                        m_IsSlowed = true;
+                    }
+
+                    m_Animator.SetBool("Damaged", true);
+                    m_Health -= damage;
+                }
+
+                bullet.gameObject.SetActive(false);
+
+                if (m_Health > 0)
+                {
+                    m_Animator.SetBool("Killed", false);
+                }
+                else
+                {
+                    m_Animator.SetBool("Killed", true);
+                }
+            }
+        }
+        else
+        {
+            m_Animator.SetBool("Damaged", false);
+        }
+    }
 }
