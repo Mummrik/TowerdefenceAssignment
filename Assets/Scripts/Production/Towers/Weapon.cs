@@ -22,13 +22,16 @@ public class Weapon : MonoBehaviour
             GameObject bullet = m_BulletPool.Rent(false);
             bullet.transform.position = transform.position;
             Bullet bulletComponent = bullet.GetComponent<Bullet>();
-            bulletComponent.SetTargetPosition(target.transform.position);
+            bulletComponent.SetTargetPosition(target.transform);
             bullet.SetActive(true);
         }
     }
 
     private void Update()
     {
-        m_Timer += Time.deltaTime;
+        if (GameManager.GameState == GameState.IsPlaying)
+        {
+            m_Timer += Time.deltaTime;
+        }
     }
 }

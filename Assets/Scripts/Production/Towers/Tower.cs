@@ -22,28 +22,31 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
-        if (m_Target == null)
+        if (GameManager.GameState == GameState.IsPlaying)
         {
-            m_Turret.Rotate(new Vector3(0, m_ReverseSpin ? -0.25f : 0.25f, 0));
-            for (int i = 0; i < EnemyManager.s_Enemies.Count; i++)
+            if (m_Target == null)
             {
-                GameObject target = EnemyManager.s_Enemies[i];
-                if (target.activeSelf && Vector3.Distance(transform.position, target.transform.position) <= m_ShootingRange)
+                m_Turret.Rotate(new Vector3(0, m_ReverseSpin ? -0.25f : 0.25f, 0));
+                for (int i = 0; i < EnemyManager.s_Enemies.Count; i++)
                 {
-                    m_Target = target;
-                    break;
+                    GameObject target = EnemyManager.s_Enemies[i];
+                    if (target.activeSelf && Vector3.Distance(transform.position, target.transform.position) <= m_ShootingRange)
+                    {
+                        m_Target = target;
+                        break;
+                    }
                 }
             }
-        }
-        else
-        {
-            if (!m_Target.activeSelf || Vector3.Distance(transform.position, m_Target.transform.position) > m_ShootingRange)
+            else
             {
-                m_Target = null;
-                return;
+                if (!m_Target.activeSelf || Vector3.Distance(transform.position, m_Target.transform.position) > m_ShootingRange)
+                {
+                    m_Target = null;
+                    return;
+                }
+                m_Turret.LookAt(m_Target.transform);
+                m_Weapon.Shoot(m_Target);
             }
-            m_Turret.LookAt(m_Target.transform);
-            m_Weapon.Shoot(m_Target);
         }
     }
 

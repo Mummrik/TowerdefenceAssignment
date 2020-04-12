@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/sc_prefabs.unity
-    guid: 52a236a6c4276c14b8be0aa90e27783c
+    path: Assets/Scenes/TowerDefence_Jocke.unity
+    guid: 7e255d417e979664eb5944698db096c1
   m_configObjects: {}

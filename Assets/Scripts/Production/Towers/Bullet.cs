@@ -12,20 +12,23 @@ public class Bullet : MonoBehaviour
     public BulletType BulletType { get => m_BulletType; }
     public float CritChance { get => m_CritChance * 0.01f; }
 
-    public void SetTargetPosition(Vector3 targetPosition)
+    public void SetTargetPosition(Transform targetPosition)
     {
-        m_TargetPosition = targetPosition;
+        m_TargetPosition = targetPosition.position + (targetPosition.forward * 0.5f);
     }
 
     void Update()
     {
-        if (transform.position == m_TargetPosition)
+        if (GameManager.GameState == GameState.IsPlaying)
         {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, 0.1f);
+            if (transform.position == m_TargetPosition)
+            {
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, 0.1f);
+            }
         }
     }
 }

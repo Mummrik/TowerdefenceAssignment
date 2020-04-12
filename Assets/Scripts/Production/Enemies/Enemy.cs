@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour
 
     public EnemyData Data { get => m_Data; }
 
-    public void ConstructEnemy(EnemyData data, List<Vector2Int> path)
+    public void ConstructEnemy(in EnemyData data, List<Vector2Int> path)
     {
         m_Data = data;
 
@@ -38,17 +38,17 @@ public class Enemy : MonoBehaviour
         m_Health = m_Data.health;
         m_IsDead = false;
         gameObject.SetActive(true);
-        m_Animator.SetBool("isWalking", false);
-        m_Animator.SetBool("Damaged", false);
-        m_Animator.SetBool("Killed", false);
     }
 
     private void Update()
     {
-        if (IsAlive())
+        if (GameManager.GameState == GameState.IsPlaying)
         {
-            CheckSlowedCondition();
-            Movement();
+            if (IsAlive())
+            {
+                CheckSlowedCondition();
+                Movement();
+            }
         }
     }
 
@@ -60,11 +60,20 @@ public class Enemy : MonoBehaviour
         }
         else
         {
+            if (!m_IsDead)
+            {
+                m_Animator.ResetTrigger("Damaged");
+                m_Animator.SetTrigger("Killed");
+                GameManager.EnemyKills++;
+            }
             m_IsDead = true;
             m_DespawnTimer += Time.deltaTime;
             if (m_DespawnTimer >= 0.5f)
             {
                 m_DespawnTimer = 0;
+                m_Animator.ResetTrigger("Damaged");
+                m_Animator.ResetTrigger("Killed");
+                m_Animator.ResetTrigger("isWalking");
                 gameObject.SetActive(false);
             }
         }
@@ -93,7 +102,7 @@ public class Enemy : MonoBehaviour
         {
             if (m_Path.Count > 0)
             {
-                m_Animator.SetBool("isWalking", true);
+                m_Animator.SetTrigger("isWalking");
                 if (transform.position != m_TargetPosition)
                 {
                     transform.LookAt(m_TargetPosition);
@@ -107,14 +116,9 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                //TODO: Reached end should remove health from tower
-
+                GameManager.TowerHealth -= m_Data.damage;
                 transform.gameObject.SetActive(false);
             }
-        }
-        else
-        {
-            m_Animator.SetBool("isWalking", false);
         }
     }
 
@@ -137,7 +141,7 @@ public class Enemy : MonoBehaviour
                         if (Vector3.Distance(transform.position, enemy.transform.position) <= 3f)
                         {
                             enemy.GetComponent<Enemy>().m_Health -= damage;
-                            enemy.GetComponent<Animator>().SetBool("Damaged", true);
+                            enemy.GetComponent<Animator>().SetTrigger("Damaged");
                         }
                     }
                 }
@@ -149,25 +153,12 @@ public class Enemy : MonoBehaviour
                         m_IsSlowed = true;
                     }
 
-                    m_Animator.SetBool("Damaged", true);
+                    m_Animator.SetTrigger("Damaged");
                     m_Health -= damage;
                 }
 
                 bullet.gameObject.SetActive(false);
-
-                if (m_Health > 0)
-                {
-                    m_Animator.SetBool("Killed", false);
-                }
-                else
-                {
-                    m_Animator.SetBool("Killed", true);
-                }
             }
-        }
-        else
-        {
-            m_Animator.SetBool("Damaged", false);
         }
     }
 }
